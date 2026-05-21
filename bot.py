@@ -1,91 +1,53 @@
-import os
-import telebot
-from telebot import types
+addEventListener('fetch', event => {
+	event.respondWith(handleRequest(event.request))
+})
 
-TOKEN = os.getenv("BOT_TOKEN")
-ADMIN_ID = int(os.getenv("ADMIN_ID"))
+// Функция отправки сообщений в Telegram
+async function sendMessage(chatId, text, token) {
+	const url = `https://api.telegram.org/bot${token}/sendMessage`
 
-bot = telebot.TeleBot(TOKEN)
+	await fetch(url, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({
+			chat_id: chatId,
+			text: text,
+		}),
+	})
+}
 
-links = [
-    "https://b2b-garant.vercel.app",
-    "https://crmb2b-garant.vercel.app",
-    "https://b2b-garantcrm.vercel.app",
-    "https://b2b-crmgarant.vercel.app",
-    "https://crm-garant.vercel.app"
-]
+async function handleRequest(request) {
+	const BOT_TOKEN = env.BOT_TOKEN
 
-users_data = {}
-current_link_index = 0
+	// Telegram шлет POST-запросы, когда кто-то пишет боту
+	if (request.method === 'POST') {
+		const update = await request.json()
 
-@bot.message_handler(commands=['start'])
-def start(message):
-    markup = types.InlineKeyboardMarkup()
+		// Если пришло сообщение
+		if (update.message) {
+			const chatId = update.message.chat.id
+			const text = update.message.text
+			const userName = update.message.from.first_name
 
-    yes_btn = types.InlineKeyboardButton("✅ Да", callback_data="yes")
-    no_btn = types.InlineKeyboardButton("❌ Нет", callback_data="no")
+			// Логика ответов
+			let reply = ''
 
-    markup.add(yes_btn, no_btn)
+			if (text === '/start') {
+				reply = `Йоу, ${userName}! 👋\n\nЯ бот на Cloudflare Workers, и я ваще не падаю.`
+			} else if (text === '/help') {
+				reply =
+					'🤖 Команды:\n/start - Начать\n/help - Эта хуйня\n\nОстальное пока не завезли.'
+			} else {
+				reply = `Ты написал: "${text}"\n\n...и что мне с этим делать? 🤔`
+			}
 
-    bot.send_message(
-        message.chat.id,
-        f"Привет, {message.from_user.first_name}!\n\nХотите получить ссылку для доступа к CRM компании?",
-        reply_markup=markup
-    )
+			// Шлем ответ юзеру
+			await sendMessage(chatId, reply, BOT_TOKEN)
+		}
 
-@bot.callback_query_handler(func=lambda call: True)
-def callback(call):
+		return new Response('OK', { status: 200 })
+	}
 
-    if call.data == "yes":
-        msg = bot.send_message(call.message.chat.id, "Введите ваше имя")
-        bot.register_next_step_handler(msg, get_name)
-
-    elif call.data == "no":
-        bot.send_message(
-            call.message.chat.id,
-            "Хорошо 🙂 Если передумаете — нажмите /start"
-        )
-
-def get_name(message):
-    users_data[message.chat.id] = {
-        "name": message.text
-    }
-
-    msg = bot.send_message(
-        message.chat.id,
-        "Введите свой рабочий номер телефона"
-    )
-
-    bot.register_next_step_handler(msg, get_phone)
-
-def get_phone(message):
-    global current_link_index
-
-    phone = message.text
-    name = users_data[message.chat.id]["name"]
-
-    link = links[current_link_index]
-
-    current_link_index += 1
-
-    if current_link_index >= len(links):
-        current_link_index = 0
-
-    bot.send_message(
-        message.chat.id,
-        f"Отлично, ваша временная ссылка готова:\n\n{link}"
-    )
-
-    username = message.from_user.username
-
-    if username:
-        username_text = f"@{username}"
-    else:
-        username_text = "нет username"
-
-    bot.send_message(
-        ADMIN_ID,
-        f"Новая заявка:\n\n👤 Имя: {name}\n📞 Телефон: {phone}\n🆔 Username: {username_text}"
-    )
-
-bot.infinity_polling()
+	// Если кто-то просто открыл ссылку на Worker'а
+	return new Response('🤖 Бот живой, здоровый, не ебет.', { status: 200 })
+}
