@@ -1,6 +1,10 @@
 {
   "name": "telegram-bot",
   "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "grammy": "^1.22.4"
+  },
   "scripts": {
     "deploy": "wrangler deploy"
   },
