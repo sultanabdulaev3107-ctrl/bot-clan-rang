@@ -3,7 +3,7 @@ main = "worker.js"
 compatibility_date = "2024-01-01"
 
 kv_namespaces = [
-  { binding = "BOT_KV", id = "YOUR_KV_ID" }
+  { binding = "BOT_KV", id = "f076326b203d4c25a3aeaaf7da98fc2d" }
 ]
 
 [triggers]
