@@ -1,6 +1,7 @@
-name = "rank-bot"
+name = "telegram-bot"
 main = "index.js"
 compatibility_date = "2026-05-23"
+compatibility_flags = ["nodejs_compat"] # <-- ЭТА СТРОКА РЕШАЕТ ПРОБЛЕМУ
 
 [vars]
 FIREBASE_LOGIN_URL = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=AIzaSyBW1ZbMiUeDZHYUO2bY8Bfnf5rRgrQGPTM"
