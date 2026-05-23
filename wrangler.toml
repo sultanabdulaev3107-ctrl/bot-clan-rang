@@ -6,7 +6,7 @@ compatibility_flags = ["nodejs_compat"]
 [triggers]
 # 50 14 * * * — это 17:50 по Москве
 # 0 18 * * * — это 21:00 по Москве
-crons = ["50 14 * * *", "0 18 * * *"]
+crons = ["10 0 * * *", "0 20 * * *"]
 
 [vars]
 TELEGRAM_BOT_TOKEN = "8633981336:AAFW5LLkttd6yzwTUq0rJtIB7K4FVQALLEQ"
