@@ -1,0 +1,20 @@
+export const ACCOUNTS = [
+    {"email": "kingcpmcpm35@gmail.com", "password": "666666"},
+    {"email": "kingcpmcpm36@gmail.com", "password": "666666"},
+    {"email": "kingcpmcpm37@gmail.com", "password": "666666"},
+    {"email": "kingcpmcpm388@gmail.com", "password": "666666"},
+    {"email": "kingcpmcpm39@gmail.com", "password": "666666"},
+    {"email": "kingcpmcpm40@gmail.com", "password": "666666"},
+    {"email": "kingcpmcpm41@gmail.com", "password": "666666"},
+    {"email": "kingcpmcpm42@gmail.com", "password": "666666"},
+    {"email": "kingcpmcpm43@gmail.com", "password": "666666"},
+    {"email": "kingcpmcpm44@gmail.com", "password": "666666"},
+    {"email": "kingcpmcpm45@gmail.com", "password": "666666"},
+    {"email": "kingcpmcpm46@gmail.com", "password": "666666"},
+    {"email": "kingcpmcpm47@gmail.com", "password": "666666"},
+    {"email": "kingcpmcpm48@gmail.com", "password": "666666"},
+    {"email": "kingcpmcpm49@gmail.com", "password": "666666"},
+    {"email": "kingcpmcpm50@gmail.com", "password": "666666"},
+    {"email": "kingcpmcpm51@gmail.com", "password": "666666"},
+    {"email": "kingcpmcpm52@gmail.com", "password": "666666"}
+];
