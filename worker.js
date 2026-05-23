@@ -2,9 +2,9 @@ export default {
   async fetch(request, env) {
     if (request.method !== "POST") return new Response("OK");
 
-    const BOT_TOKEN = "PASTE_YOUR_BOT_TOKEN_HERE";
-    const OWNER_ID = 123456789;
-    const CHAT_ID = 123456789;
+    const BOT_TOKEN = "8633981336:AAFW5LLkttd6yzwTUq0rJtIB7K4FVQALLEQ";
+    const OWNER_ID = 8732464021;
+    const CHAT_ID = 8732464021;
     const MY_CLAN_IDS = ["ddlcbcdj", "qnxouqwo"];
 
     const update = await request.json();
