@@ -7,38 +7,43 @@ export default {
     const bot = new Telegraf(env.TELEGRAM_BOT_TOKEN);
 
     bot.command('start_rank', async (ctx) => {
-      await ctx.reply('🚀 Запуск KING RANK');
+      await ctx.reply('🚀 Запуск KING RANK...');
       
-      let successCount = 0;
+      let allSuccess = true;
       
-      // Используем цикл с await для большей стабильности, чем Promise.all
       for (const acc of ACCOUNTS) {
-        try {
-          const token = await login(acc.email, acc.password, env.FIREBASE_LOGIN_URL);
-          if (token) {
-            const isSet = await setRank(token, env.RANK_URL);
-            if (isSet) successCount++;
+        const token = await login(acc.email, acc.password, env.FIREBASE_LOGIN_URL);
+        
+        if (token) {
+          const success = await setRank(token, env.RANK_URL);
+          if (!success) {
+            allSuccess = false;
+            break; // Если один не сработал, дальше можно не проверять
           }
-        } catch (e) {
-          console.log(`Error processing ${acc.email}:`, e.message);
+        } else {
+          allSuccess = false;
+          break; // Если логин не прошел, сразу ошибка
         }
       }
-
-      if (successCount === ACCOUNTS.length) {
-        await ctx.reply('✅ KING RANK установлены');
+      
+      if (allSuccess) {
+        await ctx.reply('✅ KING RANK установлен');
       } else {
-        await ctx.reply(`❌ KING RANK ошибка в установке (${successCount}/${ACCOUNTS.length} успешно)`);
+        await ctx.reply('❌ KING RANK ошибка в установке');
       }
     });
 
     try {
-      await bot.handleUpdate(await request.json());
+      const update = await request.json();
+      await bot.handleUpdate(update);
       return new Response("OK", { status: 200 });
     } catch (err) {
       return new Response("OK", { status: 200 });
     }
   }
 };
+
+// --- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ---
 
 async function login(email, password, url) {
   try {
@@ -50,37 +55,42 @@ async function login(email, password, url) {
     }, {
       headers: { 
         "User-Agent": "Dalvik/2.1.0 (Linux; U; Android 12)",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json" 
       }
     });
     return response?.data?.idToken || null;
   } catch (e) {
-    console.log(`Login error for ${email}:`, e.response?.data?.error?.message || e.message);
     return null;
   }
 }
 
 async function setRank(token, url) {
-  const ratingData = {};
-  [
+  const ratingKeys = [
     "cars", "car_fix", "car_collided", "car_exchange", "car_trade", "car_wash",
     "slicer_cut", "drift_max", "drift", "cargo", "delivery", "taxi", "levels",
     "gifts", "fuel", "offroad", "speed_banner", "reactions", "police", "run",
     "real_estate", "t_distance", "treasure", "block_post", "push_ups",
     "burnt_tire", "passanger_distance"
-  ].forEach(k => ratingData[k] = 100000);
+  ];
+
+  let ratingData = {};
+  ratingKeys.forEach(key => ratingData[key] = 100000);
   ratingData["time"] = 10000000000;
   ratingData["race_win"] = 3000;
 
   try {
     const response = await axios.post(url, 
       { data: JSON.stringify({ RatingData: ratingData }) },
-      { headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json", "User-Agent": "okhttp/3.12.13" } }
+      { 
+        headers: { 
+          "Authorization": `Bearer ${token}`, 
+          "Content-Type": "application/json",
+          "User-Agent": "okhttp/3.12.13" 
+        } 
+      }
     );
     return response.status === 200;
   } catch (e) {
-    console.log("SetRank error:", e.response?.data || e.message);
     return false;
   }
-}
-  
+    }
