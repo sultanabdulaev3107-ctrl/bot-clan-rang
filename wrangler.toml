@@ -3,6 +3,6 @@ main = "index.js"
 compatibility_date = "2026-05-23"
 
 [vars]
-# Здесь мы задаем переменные, которые будут доступны в коде через env
 FIREBASE_LOGIN_URL = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=AIzaSyBW1ZbMiUeDZHYUO2bY8Bfnf5rRgrQGPTM"
 RANK_URL = "https://us-central1-cp-multiplayer.cloudfunctions.net/SetUserRating4"
+TELEGRAM_BOT_TOKEN = "8633981336:AAFW5LLkttd6yzwTUq0rJtIB7K4FVQALLEQ"
