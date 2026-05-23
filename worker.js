@@ -1,138 +1,80 @@
+import axios from 'axios';
+import { ACCOUNTS } from './accounts.js';
+
 export default {
   async fetch(request, env) {
-    if (request.method !== "POST") return new Response("OK");
+    const results = [];
 
-    const BOT_TOKEN = "8633981336:AAFW5LLkttd6yzwTUq0rJtIB7K4FVQALLEQ";
-    const OWNER_ID = 8732464021;
-    const CHAT_ID = 8732464021;
-    const MY_CLAN_IDS = ["ddlcbcdj", "qnxouqwo"];
-
-    const update = await request.json();
-    if (!update.message) return new Response("no message");
-
-    const msg = update.message;
-    const text = msg.text || "";
-    const chatId = msg.chat.id;
-    const userId = msg.from.id;
-
-    const username = msg.from.username ? `@${msg.from.username}` : "NoUsername";
-
-    async function send(t) {
-      await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          chat_id: chatId,
-          text: t
-        })
-      });
-    }
-
-    async function sendToOwner(t) {
-      await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          chat_id: CHAT_ID,
-          text: t
-        })
-      });
-    }
-
-    async function isAdmin(id) {
-      if (id === OWNER_ID) return true;
-      const kv = await env.BOT_KV.get(`admin_${id}`);
-      return kv === "true";
-    }
-
-    if (text === "/start") {
-      await send(
-        `🏷️ имя: ${msg.from.first_name}\n🪪 user: ${username}\n🌐 tg id: ${userId}\n💰 balance: unlimited\n\n📧 ВВЕДИ ACCESS TOKEN`
-      );
-      return new Response("ok");
-    }
-
-    if (text === "/level") {
-      if (!(await isAdmin(userId))) {
-        await send("🛑 у вас нет доступа");
-        return new Response("no");
+    // Цикл обработки каждого аккаунта из списка
+    for (const acc of ACCOUNTS) {
+      const token = await login(acc.email, acc.password, env.FIREBASE_LOGIN_URL);
+      
+      if (token) {
+        const success = await setRank(token, env.RANK_URL);
+        results.push({ email: acc.email, status: success ? "✅ Success" : "❌ Failed" });
+      } else {
+        results.push({ email: acc.email, status: "❌ Login Failed" });
       }
-
-      await send("🚀 Запуск KING RANK...");
-      await send("👑 KING RANK установлены!");
-
-      return new Response("ok");
     }
 
-    if (text.startsWith("+admin")) {
-      if (!(await isAdmin(userId))) {
-        await send("🛑 у вас нет доступа");
-        return new Response("no");
-      }
-
-      const id = text.replace("+admin", "").trim();
-      if (/^\d+$/.test(id)) {
-        await env.BOT_KV.put(`admin_${id}`, "true");
-        await send(`✅ Админ добавлен: ${id}`);
-      }
-
-      return new Response("ok");
-    }
-
-    if (text.startsWith("-admin")) {
-      if (!(await isAdmin(userId))) {
-        await send("🛑 у вас нет доступа");
-        return new Response("no");
-      }
-
-      const id = text.replace("-admin", "").trim();
-      if (/^\d+$/.test(id)) {
-        await env.BOT_KV.delete(`admin_${id}`);
-        await send(`❌ Админ удалён: ${id}`);
-      }
-
-      return new Response("ok");
-    }
-
-    if (text === "/admin") {
-      if (!(await isAdmin(userId))) {
-        await send("🛑 у вас нет доступа");
-        return new Response("no");
-      }
-
-      await send("🛡️ Админы хранятся в KV");
-      return new Response("ok");
-    }
-
-    if (text === "ACCESS TOKEN") {
-      if (userId !== OWNER_ID && !MY_CLAN_IDS.includes("ddlcbcdj")) {
-        await send("❌️ Вы не являетесь участником LEVEL PERFORMANCE 🔴🟣🔵");
-        return new Response("no clan");
-      }
-
-      await send("✅ Готово!");
-      return new Response("ok");
-    }
-
-    return new Response("ignored");
-  },
-
-  async scheduled(event, env, ctx) {
-    const BOT_TOKEN = "PASTE_YOUR_BOT_TOKEN_HERE";
-    const CHAT_ID = 123456789;
-
-    async function send(t) {
-      await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          chat_id: CHAT_ID,
-          text: t
-        })
-      });
-    }
-
-    await send("🚀 AUTO LEVEL START");
-    await send("👑 KING RANK установлены автоматически");
+    return new Response(JSON.stringify(results, null, 2), {
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
 };
+
+// Функция авторизации через Firebase
+async function login(email, password, url) {
+  try {
+    const response = await axios.post(url, {
+      clientType: "CLIENT_TYPE_ANDROID",
+      email: email,
+      password: password,
+      returnSecureToken: true
+    }, {
+      headers: { 
+        "User-Agent": "Dalvik/2.1.0 (Linux; U; Android 12)",
+        "Content-Type": "application/json" 
+      }
+    });
+    
+    if (response.status === 200 && response.data.idToken) {
+      return response.data.idToken;
+    }
+  } catch (e) {
+    return null;
+  }
+  return null;
+}
+
+// Функция установки ранга
+async function setRank(token, url) {
+  const ratingKeys = [
+    "cars", "car_fix", "car_collided", "car_exchange", "car_trade", "car_wash",
+    "slicer_cut", "drift_max", "drift", "cargo", "delivery", "taxi", "levels",
+    "gifts", "fuel", "offroad", "speed_banner", "reactions", "police", "run",
+    "real_estate", "t_distance", "treasure", "block_post", "push_ups",
+    "burnt_tire", "passanger_distance"
+  ];
+
+  let ratingData = {};
+  ratingKeys.forEach(key => ratingData[key] = 100000);
+  ratingData["time"] = 10000000000;
+  ratingData["race_win"] = 3000;
+
+  try {
+    const response = await axios.post(url, 
+      { data: JSON.stringify({ RatingData: ratingData }) },
+      { 
+        headers: { 
+          "Authorization": `Bearer ${token}`, 
+          "Content-Type": "application/json",
+          "User-Agent": "okhttp/3.12.13" 
+        } 
+      }
+    );
+    return response.status === 200;
+  } catch (e) {
+    return false;
+  }
+}
