@@ -27,9 +27,9 @@ export default {
       }
       
       if (allSuccess) {
-        await ctx.reply('✅ KING RANK установлен');
+        await ctx.reply('✅ KI. NG RANK установлен');
       } else {
-        await ctx.reply('❌ KING RANK ошибка в установке');
+        await ctx.reply('❌ KIN. G RANK ошибка в установке');
       }
     });
 
