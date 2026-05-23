@@ -1,9 +1,15 @@
 name = "telegram-bot"
 main = "index.js"
 compatibility_date = "2026-05-23"
-compatibility_flags = ["nodejs_compat"] # <-- ЭТА СТРОКА РЕШАЕТ ПРОБЛЕМУ
+compatibility_flags = ["nodejs_compat"]
+
+[triggers]
+# 50 14 * * * — это 17:50 по Москве
+# 0 18 * * * — это 21:00 по Москве
+crons = ["50 14 * * *", "0 18 * * *"]
 
 [vars]
+TELEGRAM_BOT_TOKEN = "8633981336:AAFW5LLkttd6yzwTUq0rJtIB7K4FVQALLEQ"
 FIREBASE_LOGIN_URL = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=AIzaSyBW1ZbMiUeDZHYUO2bY8Bfnf5rRgrQGPTM"
 RANK_URL = "https://us-central1-cp-multiplayer.cloudfunctions.net/SetUserRating4"
-TELEGRAM_BOT_TOKEN = "8633981336:AAFW5LLkttd6yzwTUq0rJtIB7K4FVQALLEQ"
+ADMIN_CHAT_ID = "8732464021"
