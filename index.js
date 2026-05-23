@@ -4,17 +4,27 @@ import { ACCOUNTS as PART1 } from './accounts_1.js';
 import { ACCOUNTS as PART2 } from './accounts_2.js';
 import { ACCOUNTS as PART3 } from './accounts_3.js';
 
-async function processBatch(accounts, label, env) {
+// Объединяем все аккаунты в один список
+const ALL_ACCOUNTS = [...PART1, ...PART2, ...PART3];
+
+async function runFullProcess(env, chatId) {
   const bot = new Telegraf(env.TELEGRAM_BOT_TOKEN);
+  await bot.telegram.sendMessage(chatId, '🚀 Запуск процесса установки рангов на всех аккаунтах...');
+
   let success = 0;
-  for (const acc of accounts) {
-    await new Promise(r => setTimeout(r, 400));
+  for (const acc of ALL_ACCOUNTS) {
+    await new Promise(r => setTimeout(r, 150)); // Минимальная задержка для скорости
     try {
       const token = await login(acc.email, acc.password, env.FIREBASE_LOGIN_URL);
       if (token && await setRank(token, env.RANK_URL)) success++;
     } catch (e) {}
   }
-  await bot.telegram.sendMessage(env.ADMIN_CHAT_ID, `✅ ${label}: ${success}/${accounts.length} успешно`);
+
+  const message = (success === ALL_ACCOUNTS.length) 
+    ? '✅ Ранги установлены на всех 50+ аккаунтах' 
+    : `❌ Ранги установлены с ошибками: ${success}/${ALL_ACCOUNTS.length} успешно`;
+  
+  await bot.telegram.sendMessage(chatId, message);
 }
 
 async function login(email, password, url) {
@@ -37,14 +47,17 @@ async function setRank(token, url) {
 }
 
 export default {
+  async fetch(request, env) {
+    const bot = new Telegraf(env.TELEGRAM_BOT_TOKEN);
+    bot.command('start_rank', async (ctx) => {
+      // Запускаем процесс (не ждем завершения, чтобы не было ошибки таймаута)
+      runFullProcess(env, ctx.chat.id);
+    });
+    return bot.handleUpdate(await request.json()).then(() => new Response("OK"));
+  },
+
   async scheduled(event, env, ctx) {
-    // Утренние запуски
-    if (event.cron === "20 0 * * *") await processBatch(PART1, "Утро Ч1", env);
-    else if (event.cron === "45 0 * * *") await processBatch(PART2, "Утро Ч2", env);
-    else if (event.cron === "10 1 * * *") await processBatch(PART3, "Утро Ч3", env);
-    // Вечерние запуски
-    else if (event.cron === "0 20 * * *") await processBatch(PART1, "Вечер Ч1", env);
-    else if (event.cron === "30 20 * * *") await processBatch(PART2, "Вечер Ч2", env);
-    else if (event.cron === "59 20 * * *") await processBatch(PART3, "Вечер Ч3", env);
+    // Автозапуски: бот берет все аккаунты сразу
+    await runFullProcess(env, env.ADMIN_CHAT_ID);
   }
 };
