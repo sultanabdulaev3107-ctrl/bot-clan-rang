@@ -1,4 +1,4 @@
 // accounts.js
 export const ACCOUNTS = [
-    { email: "sultanabdulaev26@gmail.com", password: "31072006" },
+    { email: "sultanabdulaev26@gmail.com", password: "31072006" }
 ];
