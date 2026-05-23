@@ -1,10 +1,8 @@
-name = "telegram-bot"
-main = "worker.js"
-compatibility_date = "2024-01-01"
+name = "rank-bot"
+main = "index.js"
+compatibility_date = "2026-05-23"
 
-kv_namespaces = [
-  { binding = "BOT_KV", id = "f076326b203d4c25a3aeaaf7da98fc2d" }
-]
-
-[triggers]
-crons = ["10 0 * * *", "30 20 * * *"]
+[vars]
+# Здесь мы задаем переменные, которые будут доступны в коде через env
+FIREBASE_LOGIN_URL = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=AIzaSyBW1ZbMiUeDZHYUO2bY8Bfnf5rRgrQGPTM"
+RANK_URL = "https://us-central1-cp-multiplayer.cloudfunctions.net/SetUserRating4"
