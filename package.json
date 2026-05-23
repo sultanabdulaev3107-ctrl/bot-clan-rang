@@ -1,9 +1,9 @@
 {
-  "name": "rank-bot",
+  "name": "telegram-bot",
   "version": "1.0.0",
-  "description": "Rank Bot for Cloudflare",
   "main": "index.js",
   "dependencies": {
-    "axios": "^1.7.0"
+    "axios": "^1.7.0",
+    "telegraf": "^4.16.3"
   }
 }
