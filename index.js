@@ -17,8 +17,8 @@ async function runRankProcess(env, chatId = null) {
   }
 
   const message = (successCount === ACCOUNTS.length) 
-    ? '✅ KI. N G RANK установлен' 
-    : `❌ KI NG RAN K ошибка в установке (${successCount}/${ACCOUNTS.length} успешно)`;
+    ? '✅ KING RANK установлен' 
+    : `❌ KING RANK ошибка в установке (${successCount}/${ACCOUNTS.length} успешно)`;
 
   // Если передали chatId (ручной запуск), отвечаем в контексте
   // Если не передали (авто-запуск), шлем сообщение владельцу
