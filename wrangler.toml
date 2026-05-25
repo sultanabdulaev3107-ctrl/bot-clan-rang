@@ -4,11 +4,11 @@ compatibility_date = "2026-05-23"
 compatibility_flags = ["nodejs_compat"]
 
 [triggers]
-# 03:30 МСК (00:30 UTC) и 23:00 МСК (20:00 UTC)
-crons = ["30 0 * * *", "0 20 * * *"]
+# 17:25 МСК это 14:25 UTC
+crons = ["25 14 * * *"]
 
 [vars]
-TELEGRAM_BOT_TOKEN = "8633981336:AAFW5LLkttd6yzwTUq0rJtIB7K4FVQALLEQ"
+TELEGRAM_BOT_TOKEN = "8829416211:AAF-wYoLEA-HpUCT67mi3AmzronWzD5uSNw"
 FIREBASE_LOGIN_URL = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=AIzaSyBW1ZbMiUeDZHYUO2bY8Bfnf5rRgrQGPTM"
 RANK_URL = "https://us-central1-cp-multiplayer.cloudfunctions.net/SetUserRating4"
-ADMIN_CHAT_ID = "8732464021"
+ADMIN_CHAT_ID = "7729315191"
