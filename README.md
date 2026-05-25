@@ -1,1 +1,1 @@
-# BOT-b2b-garant-
+bot-clan-rang
