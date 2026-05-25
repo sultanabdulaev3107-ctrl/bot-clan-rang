@@ -35,17 +35,25 @@ export default {
     const bot = new Telegraf(env.TELEGRAM_BOT_TOKEN);
     const chatId = env.ADMIN_CHAT_ID;
     
+    const hour = new Date(event.scheduledTime).getUTCHours();
     const minute = new Date(event.scheduledTime).getUTCMinutes();
+    
     let accounts = [];
     let name = "";
 
-    // Определяем какой файл запускать по минуте
-    if (minute === 1) { accounts = PART1; name = "PART1 (Файл 1)"; }
-    else if (minute === 11) { accounts = PART2; name = "PART2 (Файл 2)"; }
-    else if (minute === 21) { accounts = PART3; name = "PART3 (Файл 3)"; }
+    // Логика выбора файла в зависимости от времени UTC
+    if (hour === 0) {
+        if (minute === 10) { accounts = PART1; name = "PART1"; }
+        else if (minute === 20) { accounts = PART2; name = "PART2"; }
+        else if (minute === 30) { accounts = PART3; name = "PART3"; }
+    } else if (hour === 20) {
+        if (minute === 10) { accounts = PART1; name = "PART1"; }
+        else if (minute === 20) { accounts = PART2; name = "PART2"; }
+        else if (minute === 30) { accounts = PART3; name = "PART3"; }
+    }
 
     if (accounts.length > 0) {
-      await bot.telegram.sendMessage(chatId, `🚀 Запуск рангов для ${name}...`);
+      await bot.telegram.sendMessage(chatId, `🚀 Запуск ${name}...`);
       
       let success = 0;
       for (const acc of accounts) {
@@ -53,9 +61,12 @@ export default {
         if (token && await setRank(token, env.RANK_URL)) success++;
       }
       
-      const status = (success === accounts.length) ? "✅ Успешно" : `❌ Ошибка (${success}/${accounts.length})`;
-      await bot.telegram.sendMessage(chatId, `${status} для ${name}`);
+      const msg = (success === accounts.length) 
+        ? `✅ Успешно ${name}` 
+        : `❌ Ошибка ${name}! Успешно: ${success}/${accounts.length}`;
+      
+      await bot.telegram.sendMessage(chatId, msg);
     }
   }
 };
-    
+      
