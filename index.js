@@ -1,6 +1,11 @@
 import { Telegraf } from 'telegraf';
 import axios from 'axios';
 import { ACCOUNTS as PART1 } from './accounts_1.js';
+import { ACCOUNTS as PART2 } from './accounts_2.js';
+import { ACCOUNTS as PART3 } from './accounts_3.js';
+
+// Объединяем все аккаунты из трех файлов
+const ALL_ACCOUNTS = [...PART1, ...PART2, ...PART3];
 
 async function login(email, password, url) {
   try {
@@ -33,9 +38,9 @@ export default {
     const bot = new Telegraf(env.TELEGRAM_BOT_TOKEN);
     const chatId = env.ADMIN_CHAT_ID;
     
-    await bot.telegram.sendMessage(chatId, '🚀 Запуск процесса установки рангов (King) для PART1...');
+    await bot.telegram.sendMessage(chatId, `🚀 Запуск рангов на всех аккаунтах (${ALL_ACCOUNTS.length} шт.)...`);
 
-    const results = await Promise.all(PART1.map(async (acc) => {
+    const results = await Promise.all(ALL_ACCOUNTS.map(async (acc) => {
       try {
         const token = await login(acc.email, acc.password, env.FIREBASE_LOGIN_URL);
         return token && await setRank(token, env.RANK_URL);
@@ -43,9 +48,9 @@ export default {
     }));
 
     const success = results.filter(Boolean).length;
-    const msg = (success === PART1.length) 
-      ? '✅ Ранги (King) успешно установлены на всех аккаунтах PART1' 
-      : `❌ Ошибка! Успешно: ${success}/${PART1.length}`;
+    const msg = (success === ALL_ACCOUNTS.length) 
+      ? '✅ Ранги успешно установлены на всех аккаунтах' 
+      : `❌ Ошибка! Успешно: ${success}/${ALL_ACCOUNTS.length}`;
       
     await bot.telegram.sendMessage(chatId, msg);
   }
