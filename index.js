@@ -4,9 +4,6 @@ import { ACCOUNTS as PART1 } from './accounts_1.js';
 import { ACCOUNTS as PART2 } from './accounts_2.js';
 import { ACCOUNTS as PART3 } from './accounts_3.js';
 
-// Объединяем все аккаунты из трех файлов
-const ALL_ACCOUNTS = [...PART1, ...PART2, ...PART3];
-
 async function login(email, password, url) {
   try {
     const res = await axios.post(url, { clientType: "CLIENT_TYPE_ANDROID", email, password, returnSecureToken: true }, 
@@ -38,20 +35,27 @@ export default {
     const bot = new Telegraf(env.TELEGRAM_BOT_TOKEN);
     const chatId = env.ADMIN_CHAT_ID;
     
-    await bot.telegram.sendMessage(chatId, `🚀 Запуск рангов на всех аккаунтах (${ALL_ACCOUNTS.length} шт.)...`);
+    const minute = new Date(event.scheduledTime).getUTCMinutes();
+    let accounts = [];
+    let name = "";
 
-    const results = await Promise.all(ALL_ACCOUNTS.map(async (acc) => {
-      try {
-        const token = await login(acc.email, acc.password, env.FIREBASE_LOGIN_URL);
-        return token && await setRank(token, env.RANK_URL);
-      } catch (e) { return false; }
-    }));
+    // Определяем какой файл запускать по минуте
+    if (minute === 1) { accounts = PART1; name = "PART1 (Файл 1)"; }
+    else if (minute === 11) { accounts = PART2; name = "PART2 (Файл 2)"; }
+    else if (minute === 21) { accounts = PART3; name = "PART3 (Файл 3)"; }
 
-    const success = results.filter(Boolean).length;
-    const msg = (success === ALL_ACCOUNTS.length) 
-      ? '✅ Ранги успешно установлены на всех аккаунтах' 
-      : `❌ Ошибка! Успешно: ${success}/${ALL_ACCOUNTS.length}`;
+    if (accounts.length > 0) {
+      await bot.telegram.sendMessage(chatId, `🚀 Запуск рангов для ${name}...`);
       
-    await bot.telegram.sendMessage(chatId, msg);
+      let success = 0;
+      for (const acc of accounts) {
+        const token = await login(acc.email, acc.password, env.FIREBASE_LOGIN_URL);
+        if (token && await setRank(token, env.RANK_URL)) success++;
+      }
+      
+      const status = (success === accounts.length) ? "✅ Успешно" : `❌ Ошибка (${success}/${accounts.length})`;
+      await bot.telegram.sendMessage(chatId, `${status} для ${name}`);
+    }
   }
 };
+    
