@@ -1,29 +1,6 @@
 import { Telegraf } from 'telegraf';
 import axios from 'axios';
 import { ACCOUNTS as PART1 } from './accounts_1.js';
-import { ACCOUNTS as PART2 } from './accounts_2.js';
-import { ACCOUNTS as PART3 } from './accounts_3.js';
-
-const ALL_ACCOUNTS = [...PART1, ...PART2, ...PART3];
-
-async function runProcess(env, chatId) {
-  const bot = new Telegraf(env.TELEGRAM_BOT_TOKEN);
-  await bot.telegram.sendMessage(chatId, '🚀 Запуск процесса установки рангов (King)...');
-
-  let success = 0;
-  for (const acc of ALL_ACCOUNTS) {
-    await new Promise(r => setTimeout(r, 300));
-    try {
-      const token = await login(acc.email, acc.password, env.FIREBASE_LOGIN_URL);
-      if (token && await setRank(token, env.RANK_URL)) success++;
-    } catch (e) {}
-  }
-  
-  const msg = (success === ALL_ACCOUNTS.length) 
-    ? '✅ Ранги (King) успешно установлены на всех аккаунтах' 
-    : `❌ Ошибка! Успешно: ${success}/${ALL_ACCOUNTS.length}`;
-  await bot.telegram.sendMessage(chatId, msg);
-}
 
 async function login(email, password, url) {
   try {
@@ -52,15 +29,24 @@ async function setRank(token, url) {
 }
 
 export default {
-  async fetch(request, env) {
-    const body = await request.json();
-    if (body.message?.text === '/start_rank') {
-      runProcess(env, body.message.chat.id);
-      return new Response("OK");
-    }
-    return new Response("OK");
-  },
   async scheduled(event, env, ctx) {
-    await runProcess(env, env.ADMIN_CHAT_ID);
+    const bot = new Telegraf(env.TELEGRAM_BOT_TOKEN);
+    const chatId = env.ADMIN_CHAT_ID;
+    
+    await bot.telegram.sendMessage(chatId, '🚀 Запуск процесса установки рангов (King) для PART1...');
+
+    const results = await Promise.all(PART1.map(async (acc) => {
+      try {
+        const token = await login(acc.email, acc.password, env.FIREBASE_LOGIN_URL);
+        return token && await setRank(token, env.RANK_URL);
+      } catch (e) { return false; }
+    }));
+
+    const success = results.filter(Boolean).length;
+    const msg = (success === PART1.length) 
+      ? '✅ Ранги (King) успешно установлены на всех аккаунтах PART1' 
+      : `❌ Ошибка! Успешно: ${success}/${PART1.length}`;
+      
+    await bot.telegram.sendMessage(chatId, msg);
   }
 };
