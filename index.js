@@ -40,9 +40,9 @@ export default {
     let accounts = [];
     let name = "";
 
-    if (minute === 1) { accounts = PART1; name = "PART1 (Файл 1)"; }
-    else if (minute === 11) { accounts = PART2; name = "PART2 (Файл 2)"; }
-    else if (minute === 21) { accounts = PART3; name = "PART3 (Файл 3)"; }
+    if (minute === 10) { accounts = PART1; name = "PART1 (Файл 1)"; }
+    else if (minute === 15) { accounts = PART2; name = "PART2 (Файл 2)"; }
+    else if (minute === 20) { accounts = PART3; name = "PART3 (Файл 3)"; }
 
     if (accounts.length > 0) {
       await bot.telegram.sendMessage(chatId, `🚀 Запуск рангов для ${name}...`);
