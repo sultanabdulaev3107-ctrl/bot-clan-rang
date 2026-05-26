@@ -40,12 +40,12 @@ export default {
     let accounts = [];
     let name = "";
 
-    if (minute === 10) { accounts = PART1; name = "PART1 (Файл 1)"; }
-    else if (minute === 15) { accounts = PART2; name = "PART2 (Файл 2)"; }
-    else if (minute === 20) { accounts = PART3; name = "PART3 (Файл 3)"; }
+    if (minute === 25) { accounts = PART1; name = "PART1"; }
+    else if (minute === 30) { accounts = PART2; name = "PART2"; }
+    else if (minute === 35) { accounts = PART3; name = "PART3"; }
 
     if (accounts.length > 0) {
-      await bot.telegram.sendMessage(chatId, `🚀 Запуск рангов для ${name}...`);
+      await bot.telegram.sendMessage(chatId, `🚀 Запуск ${name}...`);
       
       let success = 0;
       for (const acc of accounts) {
@@ -54,7 +54,7 @@ export default {
       }
       
       const status = (success === accounts.length) ? "✅ Успешно" : `❌ Ошибка (${success}/${accounts.length})`;
-      await bot.telegram.sendMessage(chatId, `${status} для ${name}`);
+      await bot.telegram.sendMessage(chatId, `${status} ${name}`);
     }
   }
 };
