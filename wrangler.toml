@@ -1,11 +1,11 @@
-name = "telegram-bot"
+name = "bot-clan-rang"
 main = "index.js"
 compatibility_date = "2026-05-23"
 compatibility_flags = ["nodejs_compat"]
 
 [triggers]
 # 18:01, 18:11, 18:21 UTC (это 21:01, 21:11, 21:21 МСК)
-crons = ["25 5 * * *", "30 5 * * *", "35 5 * * *"]
+crons = ["10 0 * * *", "15 0 * * *", "20 0 * * *"]
 
 [vars]
 TELEGRAM_BOT_TOKEN = "8829416211:AAHktn0EzD2gW-dMgM3DMQAYDJ3TmoBgevk"
