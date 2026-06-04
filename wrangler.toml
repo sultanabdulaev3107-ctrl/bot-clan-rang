@@ -8,7 +8,7 @@ compatibility_flags = ["nodejs_compat"]
 crons = ["10 0 * * *", "15 0 * * *", "20 0 * * *"]
 
 [vars]
-TELEGRAM_BOT_TOKEN = "8829416211:AAHktn0EzD2gW-dMgM3DMQAYDJ3TmoBgevk"
+TELEGRAM_BOT_TOKEN = "8829416211:AAFaOhaSpfLUV7EohPS3H0YHszAw_FtWk_A"
 FIREBASE_LOGIN_URL = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=AIzaSyBW1ZbMiUeDZHYUO2bY8Bfnf5rRgrQGPTM"
 RANK_URL = "https://us-central1-cp-multiplayer.cloudfunctions.net/SetUserRating4"
 ADMIN_CHAT_ID = "7729315191"
