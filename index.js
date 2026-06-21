@@ -3,6 +3,7 @@ import axios from 'axios';
 import { ACCOUNTS as PART1 } from './accounts_1.js';
 import { ACCOUNTS as PART2 } from './accounts_2.js';
 import { ACCOUNTS as PART3 } from './accounts_3.js';
+import { ACCOUNTS as PART4 } from './accounts_4.js'; // Добавляем импорт
 
 async function login(email, password, url) {
   try {
@@ -35,7 +36,6 @@ export default {
     const bot = new Telegraf(env.TELEGRAM_BOT_TOKEN);
     const chatId = env.ADMIN_CHAT_ID;
     
-    // Получаем текущую минуту запуска из планировщика
     const minute = new Date(event.scheduledTime).getUTCMinutes();
     let accounts = [];
     let name = "";
@@ -43,6 +43,7 @@ export default {
     if (minute === 10) { accounts = PART1; name = "PART1"; }
     else if (minute === 15) { accounts = PART2; name = "PART2"; }
     else if (minute === 20) { accounts = PART3; name = "PART3"; }
+    else if (minute === 25) { accounts = PART4; name = "PART4"; } // Новое условие
 
     if (accounts.length > 0) {
       await bot.telegram.sendMessage(chatId, `🚀 Запуск ${name}...`);
@@ -58,4 +59,3 @@ export default {
     }
   }
 };
-                      
