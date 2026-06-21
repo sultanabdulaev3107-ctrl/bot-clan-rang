@@ -1,3 +1,3 @@
 export const ACCOUNTS = [
-    {"email": "kingcpmcpm51@gmail.com", "password": "666666"}
+    {"email": "kingcpmcpm3@gmail.com", "password": "666666"}
 ];
