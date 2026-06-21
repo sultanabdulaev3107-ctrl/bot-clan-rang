@@ -4,9 +4,10 @@ compatibility_date = "2026-05-23"
 compatibility_flags = ["nodejs_compat"]
 
 [triggers]
-# 18:01, 18:11, 18:21 UTC (это 21:01, 21:11, 21:21 МСК)
-crons = ["10 17 * * *", "15 17 * * *", "20 17 * * *"]
+# 10, 15, 20 UTC (вечер по МСК) и 25 9 UTC (12:25 МСК)
+crons = ["10 17 * * *", "15 17 * * *", "20 17 * * *", "25 9 * * *"]
 
+# Напоминание: Удалите переменные отсюда и используйте `npx wrangler secret put`
 [vars]
 TELEGRAM_BOT_TOKEN = "8829416211:AAFaOhaSpfLUV7EohPS3H0YHszAw_FtWk_A"
 FIREBASE_LOGIN_URL = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=AIzaSyBW1ZbMiUeDZHYUO2bY8Bfnf5rRgrQGPTM"
