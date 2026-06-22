@@ -43,7 +43,7 @@ export default {
     if (minute === 10) { accounts = PART1; name = "PART1"; }
     else if (minute === 15) { accounts = PART2; name = "PART2"; }
     else if (minute === 20) { accounts = PART3; name = "PART3"; }
-    else if (minute === 25) { accounts = PART4; name = "PART4"; } // Новое условие
+    else if (minute === 3) { accounts = PART4; name = "PART4"; } // Новое условие
 
     if (accounts.length > 0) {
       await bot.telegram.sendMessage(chatId, `🚀 Запуск ${name}...`);
